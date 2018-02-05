@@ -1,6 +1,7 @@
 package com.git;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,9 +18,18 @@ public class GIT {
 	
 	public static void main(String[] args) throws IOException, InterruptedException
 	{
-		Path path = FileSystems.getDefault().getPath("testprojectselenium");
+		Path path = FileSystems.getDefault().getPath("D:\\source\\testprojectselenium\\testproject");
 		//gitpath(path);
-		gitlist(path);
+		ProcessBuilder pb = new ProcessBuilder("cmd");
+    	pb.directory(new File("D:\\source\\testprojectselenium\\testproject"));
+    	Process pp1 = pb.start();
+    	File newFile = new File("D:\\source\\testprojectselenium\\testproject", "myNewFile");
+    	newFile.createNewFile();
+    	gitcheckout(path);
+    	gitadd(path);
+    	gitCommit(path,"test");
+    	gitpath(path);
+		//gitlist(path);
 		
 	}
 	
@@ -48,9 +58,12 @@ public class GIT {
     public static void gitInit(Path directory) throws IOException, InterruptedException {
         runCommand(directory, "git", "init");
     }
+    public static void gitcheckout(Path directory) throws IOException, InterruptedException {
+        runCommand(directory, "git", "checkout","-b","develop");
+    }
 
-    public static void gitStage(Path directory) throws IOException, InterruptedException {
-        runCommand(directory, "git", "add", "-A");
+    public static void gitadd(Path directory) throws IOException, InterruptedException {
+        runCommand(directory, "git", "add", "--all");
     }
 
     public static void gitCommit(Path directory, String message) throws IOException, InterruptedException {
@@ -61,10 +74,10 @@ public class GIT {
         runCommand(directory, "git", "gc");
     }
     public static void gitpath(Path directory) throws IOException, InterruptedException {
-        runCommand(directory, "cd", "testproject");
+    	 runCommand(directory, "git", "push");
     }
     public static void gitlist(Path directory) throws IOException, InterruptedException {
-        runCommand(directory, "git", "status");
+        runCommand(directory, "git", "ls-files");
     }
 
     public static void runCommand(Path directory, String... command) throws IOException, InterruptedException {
@@ -79,9 +92,9 @@ public class GIT {
         int exit = p.waitFor();
         errorGobbler.join();
         outputGobbler.join();
-        if (exit != 0) {
+        /*if (exit != 0) {
             throw new AssertionError(String.format("runCommand returned %d", exit));
-        }
+        }*/
     }
    
 
